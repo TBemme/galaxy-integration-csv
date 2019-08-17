@@ -1,0 +1,11 @@
+{
+    "name": "Galaxy PlayStation Vita Plugin [.csv test]",
+    "platform": "psvita",
+    "guid": "c506ec8e-825e-42bc-9dc1-0e08b66e2ffd",
+    "version": "0.0.1",
+    "description": "PlayStation Vita platform integration for GOG Galaxy 2.0",
+    "author": "TBemme",
+    "email": "n/a",
+    "url": "https://github.com/TBemme/galaxy-integration-csv",
+    "script": "plugin.py"
+}
