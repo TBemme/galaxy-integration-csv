@@ -1,11 +1,11 @@
 {
-    "name": "Galaxy PlayStation Vita Plugin [.csv test]",
+    "name": "Galaxy PlayStation Vita Plugin [.csv TROPHY test]",
     "platform": "psvita",
-    "guid": "c506ec8e-825e-42bc-9dc1-0e08b66e2ffd",
-    "version": "0.0.1",
+    "guid": "496fb3a2-56f9-4b33-8787-2580acb52e04",
+    "version": "0.0.2",
     "description": "PlayStation Vita platform integration for GOG Galaxy 2.0",
     "author": "TBemme",
     "email": "n/a",
-    "url": "https://github.com/TBemme/galaxy-integration-csv",
+    "url": "https://github.com/TBemme/galaxy-integration-csv/tree/psv-trophies",
     "script": "plugin.py"
 }

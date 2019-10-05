@@ -3,13 +3,13 @@ import json
 import os
 import subprocess
 import sys
+import csv
+from datetime import datetime
 
 import config
 from galaxy.api.plugin import Plugin, create_and_run_plugin
 from galaxy.api.consts import Platform, LicenseType, LocalGameState
-from galaxy.api.types import Authentication, Game, LocalGame, LicenseInfo
-
-import csv
+from galaxy.api.types import Achievement, Authentication, Game, LocalGame, LicenseInfo
 
 class PlayStationVitaPlugin(Plugin):
 	def __init__(self, reader, writer, token):
@@ -87,9 +87,43 @@ class PlayStationVitaPlugin(Plugin):
 
 	async def get_local_games(self):
 		return self.local_games_cache
+		
+	async def get_unlocked_achievements(self, game_id: str, context: None):
+		
+		unlocked_achievements = []
+
+		with open(trophy_list, encoding='utf-8') as f:
+			reader = csv.DictReader(f)
+
+			for game in gameresults:
+				if game[1] == game_id:
+					gamedata = game
+					break
+			if gamedata[3] != None:
+				for row in reader:
+					if row['npcommid'] == gamedata[3]:
+						# print('1', row)
+						if row['unlocked'] == '1':
+							# print('2', row)
+							unlock_time = datetime.strptime(row['time_unlocked_uc'], '%Y-%m-%dT%H:%M:%S.%fZ').timestamp()
+							achievement_id = row['npcommid'] + '_' + row['trophyid']
+							achievement_name = row['title']
+							# print(unlock_time, achievement_id, achievement_name)
+							unlocked_achievements.append(
+								Achievement(
+									unlock_time,
+									achievement_id,
+									achievement_name
+								)
+							)
+					else:
+						pass
+		
+		return unlocked_achievements
 
 
 def get_games():
+	global gameresults
 	results = []
 
 	try:
@@ -97,16 +131,17 @@ def get_games():
 			reader = csv.DictReader(csvlist)
 			for row in reader:
 				results.append(
-						[row['path'], row['serial'], row['title']]
+						[row['path'], row['serial'], row['title'], row['NPcommid']]
 					)
 	except UnicodeDecodeError:
 		with open(csv_list, encoding='utf-8') as csvlist:
 			reader = csv.DictReader(csvlist)
 			for row in reader:
 				results.append(
-						[row['path'], row['serial'], row['title']]
+						[row['path'], row['serial'], row['title'], row['NPcommid']]
 					)	
 
+	gameresults = results
 	return results
 
 def get_state_changes(old_list, new_list):
@@ -121,12 +156,17 @@ def get_state_changes(old_list, new_list):
 	result.extend(LocalGame(id, new_dict[id]) for id in new_dict.keys() & old_dict.keys() if new_dict[id] != old_dict[id])
 	return result
 
-default_csv_list = os.environ['localappdata'] + '\\GOG.com\\Galaxy\\plugins\\installed\\psv_c506ec8e-825e-42bc-9dc1-0e08b66e2ffd\\gamelist.csv'	
+default_csv_list = os.environ['localappdata'] + '\\GOG.com\\Galaxy\\plugins\\installed\\psv_496fb3a2-56f9-4b33-8787-2580acb52e04\\gamelist.csv'	
 if os.path.exists(config.csv_list) and os.path.isfile(config.csv_list):
 	csv_list = config.csv_list
 else:
 	csv_list = default_csv_list
-
+	
+default_trophy_list = os.environ['localappdata'] + '\\GOG.com\\Galaxy\\plugins\\installed\\psv_496fb3a2-56f9-4b33-8787-2580acb52e04\\trophylist.csv'	
+if os.path.exists(config.trophy_list) and os.path.isfile(config.trophy_list):
+	trophy_list = config.trophy_list
+else:
+	trophy_list = default_trophy_list
 
 def main():
 	create_and_run_plugin(PlayStationVitaPlugin, sys.argv)

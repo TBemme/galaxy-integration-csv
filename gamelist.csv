@@ -1,4 +1,3 @@
-serial,title,region,path
-VLJM-35001,Persona 4: The Golden,Japan,G:\My Games\example.bat
-PCSB-00118,Metal Gear Solid: HD Collection,Europe,
-VLJS-00009,極限脱出ADV 善人シボウデス,Japan,
+serial,title,region,NPcommid,path
+VLJM-65004,Persona 4: The Golden,Japan,,G:\My Games\example.bat
+PCSG00081_00,METAL GEAR SOLID 3 HD EDITION,Japan,NPWR03124_00,
